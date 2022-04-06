@@ -3,10 +3,13 @@
 namespace Alura\Cursos\Controller;
 
 use Alura\Cursos\Entity\Curso;
+use Alura\Cursos\Helper\FlashMessageTrait;
 use Alura\Cursos\Infra\EntityManagerCreator;
 
 class Persistencia implements InterfaceControladorRequisicao
 {
+    use FlashMessageTrait;
+
     /**
      * @var \Doctrine\ORM\EntityManagerInterface
      */
@@ -19,6 +22,7 @@ class Persistencia implements InterfaceControladorRequisicao
 
     public function processaRequisicao(): void
     {
+
         //Pegando os dados no formulario
         //$descricao = $_POST['descricao']; 
 
@@ -45,12 +49,15 @@ class Persistencia implements InterfaceControladorRequisicao
             //Atualiza os dados na alteração do curso
             $curso->setId($id);
             $this->entityManager->merge($curso);
+            $this->defineMensagem('success', "Curso atualizado com sucesso");
         } else {
             //Inserindo no banco de dados
             $this->entityManager->persist($curso);
+            $this->defineMensagem('success', "Curso inserido com sucesso");
         }
+
         $this->entityManager->flush();
 
-        header('Location: /listar-cursos', 302);
+        header('Location: /listar-cursos', true, 302);
     }
 }
